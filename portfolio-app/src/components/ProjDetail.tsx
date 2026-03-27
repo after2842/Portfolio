@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
-import { GithubIcon, projects } from "./projects";
+import { GithubIcon, projects } from "./Projects";
 import { SiHuggingface } from "react-icons/si";
 
 interface ProjectDetail {
@@ -186,7 +186,7 @@ export function ProjectDetails() {
     );
   }
 
-  const projectIds = projects.map((p) => p.id);
+  const projectIds = projects.map((p: any) => p.id);
   const currentIndex = projectIds.indexOf(id!);
   const nextIndex = (currentIndex + 1) % projectIds.length;
   const nextProject = projects[nextIndex];
