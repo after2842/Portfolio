@@ -124,7 +124,7 @@ export function Nav() {
               Projects
             </a>
             <a
-              href="mailto:hello@example.com"
+              href="mailto:samuc11@uci.edu"
               className="flex items-center gap-1 hover:underline underline-offset-4 decoration-2"
             >
               Contact <ArrowUpRight className="w-3 h-3" />
