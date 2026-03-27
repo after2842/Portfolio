@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router";
 import { Nav } from "./components/Nav";
 import { Hero } from "./components/Hero";
 import { Experience } from "./components/Experience";
-import { Projects } from "./components/projects";
+import { Projects } from "./components/Projects";
 import { Footer } from "./components/Footer";
 import { ProjectDetails } from "./components/ProjDetail";
 
