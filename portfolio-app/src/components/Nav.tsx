@@ -102,7 +102,7 @@ export function Nav() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link
             to="/"
-            onClick={(e) => {
+            onClick={() => {
               // Toggle the chaos when clicking the logo!
               setChaos((c) => !c);
             }}
