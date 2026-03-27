@@ -1,0 +1,367 @@
+import { useParams, Link } from "react-router";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { GithubIcon, projects } from "./projects";
+import { SiHuggingface } from "react-icons/si";
+
+interface ProjectDetail {
+  name: string;
+  tagline: string;
+  tech: string[];
+  year: string;
+  role: string;
+  link: string;
+  github: string;
+  huggingface?: string;
+  cover: string;
+  coverType: "video" | "image";
+  sections: { id: string; label: string; content: string | string[] }[];
+}
+
+const projectDetails: Record<string, ProjectDetail> = {
+  furnfit: {
+    name: "FurnFit",
+    tagline:
+      "AI-powered fashion discovery that learns your style from Instagram and find vibe matching clothings from 350,000+ catalog.",
+    tech: [
+      "Next.js",
+      "NestJS",
+      "TypeScript",
+      "YOLOv8",
+      "OpenCLIP",
+      "Amazon Bedrock",
+      "OpenSearch",
+      "Supabase",
+      "Redis",
+      "AWS S3",
+      "Docker",
+    ],
+    year: "2026",
+    role: "Full-Stack / ML Engineer",
+    link: "https://furnfitfrontendprod.vercel.app/",
+    github: "https://github.com/after2842/FurnFit_frontend_prod",
+    huggingface: "https://huggingface.co/Samuel77/YOLOv8s-seg-fashionpedia",
+    cover: "https://www.youtube.com/embed/peZBSAa59TA",
+    coverType: "video",
+    sections: [
+      {
+        id: "overview",
+        label: "Overview",
+        content:
+          "FurnFit is a full-stack AI-powered fashion discovery platform that learns a user's personal style from their Instagram feed and delivers hyper-personalized product recommendations. Users connect their Instagram, and the system automatically analyzes their aesthetic, generates a style profile, and surfaces products that match their fashion identity — complete with AI-powered style analysis and virtual try-on for every product.",
+      },
+      {
+        id: "problem",
+        label: "Problem",
+        content:
+          "Online fashion shopping is broken. Users scroll through thousands of irrelevant products, rely on basic keyword search, and have no way to express their personal style beyond manual filtering. Existing recommendation systems treat every user the same — they optimize for clicks and conversions, not for genuine style alignment. The gap between 'what I like' and 'what I can find' remains massive.",
+      },
+      {
+        id: "architecture",
+        label: "Architecture",
+        content: [
+          "The frontend is a Next.js 16 app deployed on Vercel with server-side rendering for product pages and React Query for client state. All API calls are reverse-proxied through Next.js rewrites to keep the backend origin hidden.",
+          "The backend runs NestJS 11 on Fly.io inside Docker. Sessions are cookie-based (HttpOnly, SameSite, Secure) stored in Redis with rolling 1-day TTL, enabling horizontal scaling. Supabase PostgreSQL serves as the source of truth for users, profiles, and product metadata.",
+          "Search is powered by a self-hosted OpenSearch instance on EC2 running 350k+ products with both full-text fields and KNN vector fields (~760-dim OpenCLIP embeddings). Text search uses multi-match across title (4x boost), search_text (2x), and description (1.5x), then re-ranks using the user's style profile.",
+        ],
+      },
+      {
+        id: "ml-pipeline",
+        label: "ML Pipeline",
+        content: [
+          "Fine-tuned YOLOv8 on FashionPedia + DeepFashion2 datasets for apparel detection and segmentation. The model runs on Vast.ai via vLLM and detects, crops, and masks individual garments from lifestyle photos — isolating garments produces far better embeddings than embedding entire scenes.",
+          "OpenCLIP generates ~760-dimensional normalized embeddings for both text and images in the same vector space, enabling cross-modal search. A text query can find visually similar products, and an image can surface semantically related items.",
+          "Amazon Bedrock Nova Pro handles multimodal analysis: extracting aesthetic archetypes (12 categories), lifestyle occasions (10 categories), and color/pattern affinities (10 categories) from user photos, plus generating per-image style recommendations and personalized product advice.",
+          "Virtual try-on uses Amazon Bedrock Nova Canvas to composite products onto the user's photo. The system classifies garments as UPPER_BODY, LOWER_BODY, or FULL_BODY, resizes images to fit within 4-megapixel limits, and generates realistic composites.",
+        ],
+      },
+      {
+        id: "instagram-sync",
+        label: "Instagram Sync Pipeline",
+        content: [
+          "When a user connects their Instagram, Apify scrapes up to 10 recent posts. Images are downloaded, uploaded to S3, and stored in Supabase. The sync returns quickly — the heavy analysis runs asynchronously.",
+          "In the background, Nova Pro analyzes all photos to build a style profile (aesthetic archetype, lifestyle occasion, color/pattern affinity). Then it generates per-image outputs: a compliment, a specific apparel recommendation, and a short 'why' phrase.",
+          "Finally, OpenCLIP encodes each recommendation into a text embedding stored in the database. These pre-computed vectors power the dashboard's recommendation feed — each Instagram image maps to a set of visually and semantically matched products via KNN search across the 350k+ catalog.",
+        ],
+      },
+      {
+        id: "solution",
+        label: "The Result",
+        content:
+          "The platform delivers three recommendation paths: text-embedding recs from the sync pipeline (primary dashboard feed), live photo-based recs using real-time YOLO detection + embedding, and personalized text search with profile-based re-ranking. Every product page offers AI-generated style advice and one-click virtual try-on. The entire flow — from Instagram connection to personalized shopping — is seamless and automatic.",
+      },
+    ],
+  },
+  bidangil: {
+    name: "Bidangil",
+    tagline:
+      "A Korean e-commerce proxy purchasing service that generated $7,000 in revenue. It bridged the gap for U.S. shoppers locked out of Korean online stores.",
+    tech: [
+      "Next.js",
+      "Django",
+      "PostgreSQL",
+      "Stripe",
+      "Redis",
+      "WebSocket",
+      "OpenAI",
+      "FedEx API",
+      "AWS S3",
+      "AWS EC2",
+    ],
+    year: "2025",
+    role: "Founder / Full-Stack Engineer",
+    link: "#",
+    github: "#",
+    cover: "https://www.youtube.com/embed/QdaP3EVkgRw",
+    coverType: "video",
+    sections: [
+      {
+        id: "overview",
+        label: "Overview",
+        content:
+          "Bidangil is a proxy purchasing service that enables U.S.-based shoppers to buy products from Korean online stores. Korean e-commerce platforms require Korean bank-issued credit cards and Korean carrier-issued phone numbers to complete purchases — a significant barrier for Korean Americans and overseas buyers. Registered as an LLC in South Korea, the service operated from April to December 2025 and generated ~$7,000 USD in revenue at a 4% commission rate.",
+      },
+      {
+        id: "problem",
+        label: "Problem",
+        content:
+          "Korean e-commerce is walled off from international buyers. Platforms like Coupang, Naver Shopping, and Musinsa require Korean payment methods and Korean phone verification — there's no guest checkout for foreign cards. Korean Americans who want to buy from these stores have no straightforward option. Existing proxy services are expensive, opaque, and lack real-time communication with customers.",
+      },
+      {
+        id: "architecture",
+        label: "Architecture",
+        content: [
+          "The frontend is a Next.js 14 app deployed on Vercel with full bilingual support (Korean and English). State management uses React Context for auth, orders, and community data, with sessionStorage persistence so users don't lose form progress if redirected to login.",
+          "The backend runs Django 4.2 with Django REST Framework on AWS EC2, using Daphne as the ASGI server to support both HTTP and WebSocket connections. PostgreSQL handles all persistent data, and Redis serves dual duty as both the Celery task broker and the Django Channels WebSocket layer.",
+          "The system integrates 8+ third-party APIs: Stripe for two-stage payments, OpenAI GPT-4o for product name extraction from URLs, DALL-E for AI avatar generation, FedEx API for delivery tracking, Naver Sens for SMS notifications, Google Maps for address validation, and AWS S3 for image storage.",
+        ],
+      },
+      {
+        id: "order-lifecycle",
+        label: "Order Lifecycle",
+        content: [
+          "Orders follow a multi-step lifecycle with two-stage Stripe payments. A customer submits product URLs and a U.S. shipping address. GPT-4o automatically extracts product names from the URLs via a Celery background task. The admin then sets item prices in Korean Won, which triggers automatic Stripe checkout session creation with USD conversion.",
+          "After the customer pays for items, the admin purchases them from Korean stores, sets a delivery fee, and triggers a second Stripe checkout for shipping. Once paid, the package ships via FedEx, EMS, or DHL. A Celery Beat task polls the FedEx API every 2 hours for tracking updates until delivery is confirmed.",
+          "Every state transition — order received, payment confirmed, items purchased, delivery started, delivery completed — triggers both email (Django SMTP) and SMS (Naver Sens API) notifications to both the customer and admin. Django signals handle this event-driven notification pipeline.",
+        ],
+      },
+      {
+        id: "community",
+        label: "Community Platform",
+        content: [
+          "To drive engagement beyond transactions, the platform includes a full community section. Users take a 4-question personality quiz that feeds into DALL-E to generate a unique chibi avatar — delivered in real-time via WebSocket notifications through Django Channels.",
+          "The community supports star-rated product reviews with up to 9 image uploads, categorized discussion boards (chat, meetup, share, food) with pagination and filtering, threaded comments with nested replies, and a social layer with user/post/comment likes and profile pages. All features are fully bilingual in Korean and English.",
+        ],
+      },
+      {
+        id: "lessons",
+        label: "Business Lessons",
+        content: [
+          "The market problem was real — genuine demand existed from Korean Americans locked out of Korean e-commerce. But 4% commission on ~$7,000 in orders couldn't sustain EC2 + PostgreSQL + Redis + third-party API costs. Irregular demand patterns (2+ months of zero orders followed by bursts of 5 in two weeks) made fixed infrastructure costs hard to justify.",
+          "The original plan used cryptocurrency for KRW-USD transfers, but Korean financial regulations prohibited this method. Combined with excessive U.S. tariffs under the Trump administration and the founder returning to school, the business shut down in December 2025. The project remains a complete, production-grade full-stack system integrating payments, real-time notifications, AI features, and international logistics.",
+        ],
+      },
+    ],
+  },
+};
+
+export function ProjectDetails() {
+  const { id } = useParams();
+
+  const project = id ? projectDetails[id] : undefined;
+
+  if (!project) {
+    return (
+      <main className="max-w-5xl mx-auto px-6 py-24 md:py-32 flex flex-col gap-8 items-center">
+        <h1 className="text-4xl font-bold tracking-tighter">
+          Project not found
+        </h1>
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 font-mono text-sm uppercase hover:underline underline-offset-4 decoration-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Link>
+      </main>
+    );
+  }
+
+  const projectIds = projects.map((p) => p.id);
+  const currentIndex = projectIds.indexOf(id!);
+  const nextIndex = (currentIndex + 1) % projectIds.length;
+  const nextProject = projects[nextIndex];
+
+  return (
+    <main className="max-w-5xl mx-auto px-6 py-24 md:py-32 flex flex-col gap-16">
+      <div className="flex items-center gap-4 border-b border-black pb-8">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 font-mono text-sm uppercase hover:underline underline-offset-4 decoration-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Link>
+      </div>
+
+      <header className="flex flex-col gap-6">
+        <div className="flex justify-between items-start flex-col md:flex-row gap-6">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tighter leading-tight">
+            {project.name}
+          </h1>
+          <div className="flex gap-4">
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 border border-black px-4 py-2 font-mono text-sm uppercase hover:bg-neutral-100 transition-colors"
+            >
+              <GithubIcon className="w-4 h-4" />
+              Source
+            </a>
+            {project.huggingface && (
+              <a
+                href={project.huggingface}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 border border-black px-4 py-2 font-mono text-sm uppercase hover:bg-neutral-100 transition-colors"
+              >
+                <SiHuggingface className="w-4 h-4" />
+                Model
+              </a>
+            )}
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 border border-black px-4 py-2 font-mono text-sm uppercase bg-black text-white hover:bg-neutral-800 transition-colors"
+            >
+              <ArrowUpRight className="w-4 h-4" />
+              Live Demo
+            </a>
+          </div>
+        </div>
+        <p className="text-xl md:text-2xl text-neutral-600 max-w-3xl leading-relaxed">
+          {project.tagline}
+        </p>
+      </header>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-black border border-black">
+        <div className="bg-white p-6 flex flex-col gap-2">
+          <span className="font-mono text-xs text-neutral-500 uppercase tracking-widest">
+            Role
+          </span>
+          <span className="font-medium">{project.role}</span>
+        </div>
+        <div className="bg-white p-6 flex flex-col gap-2">
+          <span className="font-mono text-xs text-neutral-500 uppercase tracking-widest">
+            Year
+          </span>
+          <span className="font-medium">{project.year}</span>
+        </div>
+        <div className="bg-white p-6 flex flex-col gap-2 col-span-2 md:col-span-2">
+          <span className="font-mono text-xs text-neutral-500 uppercase tracking-widest">
+            Tech Stack
+          </span>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {project.tech.map((t) => (
+              <span
+                key={t}
+                className="text-xs font-mono border border-black px-2 py-0.5 uppercase tracking-wider"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full aspect-[16/9] border border-black overflow-hidden relative group">
+        {project.coverType === "video" ? (
+          <iframe
+            src={project.cover}
+            title={`${project.name} demo`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="w-full h-full"
+          />
+        ) : (
+          <img
+            src={project.cover}
+            alt={`${project.name} cover`}
+            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+          />
+        )}
+      </div>
+
+      <article className="grid grid-cols-1 md:grid-cols-12 gap-12">
+        <div className="md:col-span-4 flex flex-col gap-8">
+          <div className="sticky top-24">
+            <h2 className="text-xl font-bold uppercase tracking-tight mb-4 border-b border-black pb-2">
+              Contents
+            </h2>
+            <ul className="flex flex-col gap-3 font-mono text-sm">
+              {project.sections.map((section, i) => (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    className="hover:underline underline-offset-4 decoration-2"
+                  >
+                    {String(i + 1).padStart(2, "0")}. {section.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="md:col-span-8 flex flex-col gap-16">
+          {project.sections.map((section, i) => (
+            <section
+              key={section.id}
+              id={section.id}
+              className="flex flex-col gap-4 scroll-mt-24"
+            >
+              <h3 className="font-mono text-sm text-neutral-500 uppercase tracking-widest">
+                {String(i + 1).padStart(2, "0")}. {section.label}
+              </h3>
+              {Array.isArray(section.content) ? (
+                section.content.map((paragraph, j) => (
+                  <p
+                    key={j}
+                    className="text-lg leading-relaxed text-neutral-800"
+                  >
+                    {paragraph}
+                  </p>
+                ))
+              ) : (
+                <p className="text-lg leading-relaxed text-neutral-800">
+                  {section.content}
+                </p>
+              )}
+            </section>
+          ))}
+        </div>
+      </article>
+
+      <div className="border-t border-black pt-16 mt-8 flex justify-between items-center">
+        <div className="flex flex-col gap-2">
+          <span className="font-mono text-xs text-neutral-500 uppercase tracking-widest">
+            Next Project
+          </span>
+          <Link
+            to={`/project/${nextProject.id}`}
+            className="text-2xl font-bold hover:underline decoration-2 underline-offset-4"
+          >
+            {nextProject.name}
+          </Link>
+        </div>
+        <Link
+          to={`/project/${nextProject.id}`}
+          className="border border-black p-4 hover:bg-black hover:text-white transition-colors"
+        >
+          <ArrowUpRight className="w-6 h-6" />
+        </Link>
+      </div>
+    </main>
+  );
+}
