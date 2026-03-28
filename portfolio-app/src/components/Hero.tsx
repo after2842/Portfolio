@@ -5,13 +5,13 @@ export function Hero() {
         Samuel Choi
       </div>
       <h1 className="text-5xl md:text-7xl font-bold tracking-tighter leading-tight">
-        Builds Software <br />
-        Wants to Grow
+        Building Software, <br />
+        Driven to Grow
       </h1>
       <p className="text-lg text-neutral-600 max-w-2xl leading-relaxed mt-4">
-        Hi, I'm Samuel. The most common words I hear from developers at coffee
-        chats are the passion I have. I'd like to own the process end to end and
-        influence the world someday.
+        Hi, I'm Samuel. The most common feedback I hear from developers during
+        coffee chats is about the passion I have. I want to own the process
+        end-to-end and influence the world someday.
       </p>
     </section>
   );
