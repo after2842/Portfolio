@@ -13,7 +13,8 @@ interface ProjectDetail {
   github: string;
   huggingface?: string;
   cover: string;
-  coverType: "video" | "image";
+  coverType: "video" | "image" | "gallery";
+  coverImages?: string[];
   sections: { id: string; label: string; content: string | string[] }[];
 }
 
@@ -109,8 +110,8 @@ const projectDetails: Record<string, ProjectDetail> = {
     ],
     year: "2025",
     role: "Founder / Full-Stack Engineer",
-    link: "#",
-    github: "#",
+    link: "https://bidangil.co",
+    github: "https://github.com/after2842/bidangil_back",
     cover: "https://www.youtube.com/embed/QdaP3EVkgRw",
     coverType: "video",
     sections: [
@@ -159,6 +160,138 @@ const projectDetails: Record<string, ProjectDetail> = {
           "The market problem was real — genuine demand existed from Korean Americans locked out of Korean e-commerce. But 4% commission on ~$7,000 in orders couldn't sustain EC2 + PostgreSQL + Redis + third-party API costs. Irregular demand patterns (2+ months of zero orders followed by bursts of 5 in two weeks) made fixed infrastructure costs hard to justify.",
           "The original plan used cryptocurrency for KRW-USD transfers, but Korean financial regulations prohibited this method. Combined with excessive U.S. tariffs under the Trump administration and the founder returning to school, the business shut down in December 2025. The project remains a complete, production-grade full-stack system integrating payments, real-time notifications, AI features, and international logistics.",
         ],
+      },
+    ],
+  },
+  "mafia-game": {
+    name: "Mafia Game",
+    tagline:
+      "A real-time multiplayer social deduction game built with WebSockets — create a room, assign roles, and survive the night.",
+    tech: [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "FastAPI",
+      "WebSocket",
+      "Python",
+      "TypeScript",
+    ],
+    year: "2025-2026",
+    role: "Full-Stack Engineer",
+    link: "https://mafia-front-hazel.vercel.app/",
+    github: "https://github.com/after2842/Mafia-backend",
+    cover: "",
+    coverType: "gallery",
+    coverImages: [
+      "/mafia-1.png",
+      "/mafia-2.png",
+      "/mafia-3.png",
+      "/mafia-4.png",
+      "/mafia-5.png",
+      "/mafia-6.png",
+    ],
+    sections: [
+      {
+        id: "overview",
+        label: "Overview",
+        content:
+          "A browser-based multiplayer Mafia/Werewolf game where players join lobbies via a 4-digit room code, get secretly assigned roles (Mafia, Journalist, Citizen), and play through night/day cycles with real-time chat, timed voting, and a quiz-based lifeguard mechanic. The entire game runs over a single WebSocket connection per player — no polling, no REST calls during gameplay.",
+      },
+      {
+        id: "game-flow",
+        label: "Game Flow",
+        content: [
+          "A host creates a room and configures the role distribution (mafia, journalist, citizen counts). Players join via a room code or invite link. Once the game starts, roles are randomly assigned and privately revealed to each player.",
+          "During the night phase (35 seconds), each role acts simultaneously: Mafia selects a kill target (visible only to other mafia members), the Journalist picks someone to investigate, and Citizens answer timed quiz questions — correct answers earn a one-time lifeguard shield that can save them from a mafia kill.",
+          "The day phase opens with a morning report: who was killed, who was saved by a shield, and the journalist's investigation results. Players discuss in global chat with a 4-minute timer (extendable by the host). Then a majority vote selects a suspect, who gets a last defense speech before a final kill/save vote. The cycle repeats until one side wins — citizens win when all mafia are eliminated, mafia win when they equal or outnumber the remaining players.",
+        ],
+      },
+      {
+        id: "frontend",
+        label: "Frontend",
+        content: [
+          "Built with Vite + React 18 and Tailwind CSS. The app manages the full game lifecycle through a custom useWebSocket hook that establishes the connection, routes incoming messages to the correct listeners, and exposes a send method for outbound game actions.",
+          "The UI flows from a landing page (create/join room with invite link support), to a lobby (role configuration, player list, shareable room link), to the game itself — with distinct views for day and night phases, chat panels, vote dialogs, role introduction screens, and end-of-game role reveals. In development, Vite proxies /ws and /api to the FastAPI backend on port 8000.",
+        ],
+      },
+      {
+        id: "backend",
+        label: "Backend",
+        content: [
+          "A single FastAPI application handles everything through one WebSocket endpoint at /ws/{room_id}. The server processes all game events — room creation, joining, starting, chatting, mafia kills, journalist investigations, quiz answers, votes, final votes, timer extensions, and day skips — entirely over WebSocket messages.",
+          "The GameRoom class manages the full state machine: player/role tracking, phase timers with auto-advance on expiry, vote tallying, quiz scoring from a JSON question bank, morning report generation, and lifeguard shield logic. Journalist results are scoped privately, mafia targets are visible only to mafia members, and system announcements broadcast to all.",
+          "State is held in-memory (a Python dict of rooms) for simplicity and zero-latency access. In production, the built React frontend is served as static files by FastAPI itself, making the entire game a single deployable process.",
+        ],
+      },
+      {
+        id: "design-decisions",
+        label: "Design Decisions",
+        content: [
+          "WebSocket-only gameplay was a deliberate choice — social deduction games need instant feedback. Every kill, vote, and chat message arrives in real-time with no HTTP overhead. The single-endpoint design keeps the protocol simple: one connection per player, message type routing on both sides.",
+          "The quiz-based lifeguard mechanic adds a skill element to the citizen role, which is traditionally passive. Instead of random chance, citizens can actively earn protection through quick thinking under time pressure. The question bank is a simple JSON file, making it trivial to extend or theme.",
+          "In-memory state was chosen over a database because game rooms are ephemeral by nature — they last minutes, not days. This eliminates all persistence overhead and keeps the server code minimal. The trade-off (server restart clears all rooms) is acceptable for a game with short sessions.",
+        ],
+      },
+    ],
+  },
+  furniscan: {
+    name: "FurniScan",
+    tagline:
+      "Upload a video of any room, automatically detect every piece of furniture, and retrieve real-world specs — dimensions, brand, weight — through visual search.",
+    tech: [
+      "AWS Rekognition",
+      "SerpApi",
+      "Google Lens",
+      "Python",
+      "FastAPI",
+      "React",
+      "AWS S3",
+    ],
+    year: "2026",
+    role: "Full-Stack / ML Engineer",
+    link: "#",
+    github: "#",
+    cover: "",
+    coverType: "image",
+    sections: [
+      {
+        id: "overview",
+        label: "Overview",
+        content:
+          "FurniScan is a tool that takes a walkthrough video of a house or room, detects every piece of furniture in each frame using AWS Rekognition, and then uses Google Lens (via SerpApi) to identify the exact product — retrieving real-world specifications like height, width, depth, brand, weight, and price. The goal is to turn any room video into a complete furniture inventory with specs, no manual measurement required.",
+      },
+      {
+        id: "problem",
+        label: "Problem",
+        content:
+          "When moving, staging, or furnishing a space, people need to know the exact dimensions of existing furniture — will this couch fit through the door? Will this table work in the new apartment? Currently, you either measure everything by hand or dig through old receipts and product pages. For real estate, interior design, and moving logistics, there's no fast way to go from 'I see a chair' to 'that chair is 32\" wide and weighs 45 lbs.'",
+      },
+      {
+        id: "pipeline",
+        label: "Planned Pipeline",
+        content: [
+          "Step 1 — Video Upload & Frame Extraction: The user uploads a room walkthrough video. The system extracts frames at regular intervals (e.g., every 1-2 seconds) and stores them in S3.",
+          "Step 2 — Furniture Detection (AWS Rekognition): Each frame is sent to AWS Rekognition for object detection. The service returns bounding boxes, labels (couch, table, lamp, chair), and confidence scores. Frames are filtered to keep only high-confidence furniture detections, and duplicates across frames are deduplicated.",
+          "Step 3 — Cropping & Visual Search: Detected furniture regions are cropped from the original frames. Each cropped image is sent to SerpApi's Google Lens endpoint, which returns visually similar products from across the web — matching the exact or closest product listing.",
+          "Step 4 — Spec Scraping: From the Google Lens results, the system follows product links and scrapes structured data — dimensions (H x W x D), weight, brand, material, price, and retailer. This builds a complete spec sheet for each detected item.",
+          "Step 5 — Inventory Output: The final output is a structured inventory: each piece of furniture with its photo crop, matched product, and full specifications. Exportable as a report or browsable in the UI.",
+        ],
+      },
+      {
+        id: "architecture",
+        label: "Planned Architecture",
+        content: [
+          "Frontend: React app for video upload, progress tracking, and inventory browsing. Users can review detected items, confirm or correct matches, and export results.",
+          "Backend: FastAPI server orchestrating the pipeline — frame extraction (FFmpeg), Rekognition API calls, SerpApi requests, and web scraping. Background processing via task queue for long-running video analysis.",
+          "Storage: AWS S3 for uploaded videos, extracted frames, and cropped furniture images. PostgreSQL for the furniture inventory, matched products, and scraped specs.",
+          "Key challenge: Deduplication across frames — the same couch appears in dozens of consecutive frames. Planning to use a combination of bounding box IoU overlap and visual embedding similarity to collapse detections of the same item.",
+        ],
+      },
+      {
+        id: "status",
+        label: "Current Status",
+        content:
+          "This project is in the planning and prototyping phase. The core pipeline concept has been validated — AWS Rekognition reliably detects furniture categories, and SerpApi's Google Lens endpoint returns matching product listings with specs. Next steps are building the frame extraction and deduplication pipeline, followed by the scraping layer and frontend.",
       },
     ],
   },
@@ -275,23 +408,44 @@ export function ProjectDetails() {
         </div>
       </div>
 
-      <div className="w-full aspect-[16/9] border border-black overflow-hidden relative group">
-        {project.coverType === "video" ? (
-          <iframe
-            src={project.cover}
-            title={`${project.name} demo`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-          />
-        ) : (
-          <img
-            src={project.cover}
-            alt={`${project.name} cover`}
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-          />
-        )}
-      </div>
+      {project.coverType === "gallery" && project.coverImages ? (
+        <div className="border border-black overflow-hidden">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-px bg-black [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {project.coverImages.map((src, i) => (
+              <div key={i} className="flex-shrink-0 snap-start bg-white p-4">
+                <img
+                  src={src}
+                  alt={`${project.name} screenshot ${i + 1}`}
+                  className="h-[500px] w-auto object-contain"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="bg-white border-t border-black px-4 py-2">
+            <span className="font-mono text-xs text-neutral-500 uppercase tracking-widest">
+              Scroll to explore
+            </span>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full aspect-[16/9] border border-black overflow-hidden relative group">
+          {project.coverType === "video" ? (
+            <iframe
+              src={project.cover}
+              title={`${project.name} demo`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          ) : (
+            <img
+              src={project.cover}
+              alt={`${project.name} cover`}
+              className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+            />
+          )}
+        </div>
+      )}
 
       <article className="grid grid-cols-1 md:grid-cols-12 gap-12">
         <div className="md:col-span-4 flex flex-col gap-8">
