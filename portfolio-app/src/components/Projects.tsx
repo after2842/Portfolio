@@ -36,11 +36,11 @@ const projects = [
     github: "https://github.com/after2842/Mafia-front",
   },
   {
-    id: "furniscan",
-    name: "FurniScan",
-    desc: "Upload a home video, detect furniture via AWS Rekognition, and retrieve real-world dimensions through Google Lens.",
-    tech: ["In Progress"],
-    link: "#",
+    id: "mover",
+    name: "Mover",
+    desc: "Upload a room walkthrough video and get a clustered inventory of every unique furniture item — powered by MediaConvert, Rekognition, OpenCLIP, and HDBSCAN.",
+    tech: ["In Progress", "AWS", "OpenCLIP", "HDBSCAN"],
+    link: "https://mover-draft-frontend.vercel.app/",
     github: "#",
   },
 ];
