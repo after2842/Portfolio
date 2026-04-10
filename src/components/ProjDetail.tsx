@@ -238,7 +238,7 @@ const projectDetails: Record<string, ProjectDetail> = {
   mover: {
     name: "Mover",
     tagline:
-      "Upload a room walkthrough video and get a clustered inventory of every unique furniture item — built around MediaConvert normalization, Rekognition detection, OpenCLIP embeddings, and HDBSCAN clustering.",
+      "Upload a room walkthrough video and get a clustered inventory of every unique furniture items",
     tech: [
       "Next.js",
       "NestJS",
