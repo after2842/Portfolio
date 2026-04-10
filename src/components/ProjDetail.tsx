@@ -92,6 +92,7 @@ const projectDetails: Record<string, ProjectDetail> = {
       },
     ],
   },
+
   bidangil: {
     name: "Bidangil",
     tagline:
