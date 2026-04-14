@@ -310,7 +310,7 @@ const projectDetails: Record<string, ProjectDetail> = {
     ],
   },
   hvac: {
-    name: "FieldEstimate",
+    name: "HVAC",
     tagline:
       "A field-assistant for HVAC technicians + chat with a Claude-powered assistant",
     tech: [
