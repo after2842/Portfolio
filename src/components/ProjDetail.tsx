@@ -238,7 +238,7 @@ const projectDetails: Record<string, ProjectDetail> = {
   mover: {
     name: "Mover",
     tagline:
-      "Upload a room walkthrough video and get a clustered inventory of every unique furniture items",
+      "Upload a room walkthrough video and get a clustered inventory of every unique furniture items.",
     tech: [
       "Next.js",
       "NestJS",
@@ -312,7 +312,7 @@ const projectDetails: Record<string, ProjectDetail> = {
   hvac: {
     name: "FieldEstimate",
     tagline:
-      "A mobile-first field-assistant for HVAC technicians — fuzzy search equipment, labor, and customers, build running estimates, and chat with a Claude-powered assistant that streams cited results straight into the cart.",
+      "A field-assistant for HVAC technicians + chat with a Claude-powered assistant",
     tech: [
       "React 19",
       "Vite",
