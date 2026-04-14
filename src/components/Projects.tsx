@@ -1,5 +1,6 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Plus, Minus } from "lucide-react";
 import { SiHuggingface } from "react-icons/si";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 export function GithubIcon({ className }: { className?: string }) {
   return (
@@ -43,12 +44,25 @@ const projects = [
     link: "https://mover-draft-frontend.vercel.app/",
     github: "#",
   },
+  {
+    id: "hvac",
+    name: "FieldEstimate",
+    desc: "A mobile-first field-assistant for HVAC technicians — fuzzy search equipment, labor, and customers, build running estimates, and chat with a Claude-powered assistant that can add cited items straight to the cart.",
+    tech: ["FastAPI", "Claude Haiku 4.5", "Supabase", "Redis", "SSE"],
+    link: "https://hvac-brown.vercel.app/",
+    github: "https://gitlab.com/samuelchoi77/hvac",
+    extended: true,
+  },
 ];
 
 export { projects };
 
 export function Projects() {
   const navigate = useNavigate();
+  const [expanded, setExpanded] = useState(false);
+  const visibleProjects = expanded
+    ? projects
+    : projects.filter((p: any) => !p.extended);
   return (
     <section id="projects" className="flex flex-col gap-8 scroll-mt-24">
       <h2 className="text-2xl font-bold tracking-tight uppercase flex items-center gap-4">
@@ -56,7 +70,7 @@ export function Projects() {
         <span className="flex-grow h-px bg-black"></span>
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-black border border-black mt-4">
-        {projects.map((proj, i) => (
+        {visibleProjects.map((proj, i) => (
           <div
             key={i}
             className="bg-white p-8 flex flex-col h-full group hover:bg-neutral-50 transition-colors"
@@ -113,6 +127,22 @@ export function Projects() {
           </div>
         ))}
       </div>
+      <button
+        onClick={() => setExpanded((v) => !v)}
+        className="cursor-pointer self-center mt-2 inline-flex items-center gap-2 border border-black px-4 py-2 font-mono text-xs uppercase tracking-widest hover:bg-black hover:text-white transition-colors"
+      >
+        {expanded ? (
+          <>
+            <Minus className="w-4 h-4" />
+            Show Less
+          </>
+        ) : (
+          <>
+            <Plus className="w-4 h-4" />
+            More Projects
+          </>
+        )}
+      </button>
     </section>
   );
 }

@@ -309,6 +309,91 @@ const projectDetails: Record<string, ProjectDetail> = {
       },
     ],
   },
+  hvac: {
+    name: "FieldEstimate",
+    tagline:
+      "A mobile-first field-assistant for HVAC technicians — fuzzy search equipment, labor, and customers, build running estimates, and chat with a Claude-powered assistant that streams cited results straight into the cart.",
+    tech: [
+      "React 19",
+      "Vite",
+      "Tailwind v4",
+      "FastAPI",
+      "Claude Haiku 4.5",
+      "Supabase Postgres",
+      "Redis",
+      "SSE",
+      "Render",
+      "Vercel",
+    ],
+    year: "2026",
+    role: "Full-Stack Engineer",
+    link: "https://hvac-brown.vercel.app/",
+    github: "https://gitlab.com/samuelchoi77/hvac",
+    cover: "https://www.youtube.com/embed/UHCIyqeNtAA",
+    coverType: "video",
+    sections: [
+      {
+        id: "overview",
+        label: "Overview",
+        content:
+          "FieldEstimate is a field-assistant web app for HVAC technicians. From a single mobile-first screen, techs fuzzy-search equipment, labor rates, and customers, build a running estimate, and ask a Claude-powered assistant follow-up questions — with cited items dropping straight into the cart. The frontend is a Vite + React 19 SPA; the backend is a FastAPI service that owns search, session carts, and a streaming tool-using AI chat endpoint.",
+      },
+      {
+        id: "problem",
+        label: "Problem",
+        content:
+          "HVAC techs work on their phone in a customer's driveway. They need to look up an exact part, pull a labor rate, remember which customer they're at, and hand the homeowner a number — fast, with messy typed input like 'tranek heat pum'. Existing tools are clunky desktop software or disconnected spreadsheets. The goal was a single screen where search, estimate-building, and an AI assistant all share the same cart and session.",
+      },
+      {
+        id: "architecture",
+        label: "Architecture",
+        content: [
+          "The frontend is a Vite + React 19 + TypeScript SPA deployed to Vercel, styled with Tailwind v4 using @theme inline tokens and a custom dark variant. It uses Motion for transitions, react-markdown + remark-gfm for streamed AI output, and talks to the backend via a Vite dev proxy locally and a cross-origin fetch with credentials in production.",
+          "The backend is a FastAPI + uvicorn service on Render. Durable catalog data (equipment, labor rates, customers) lives in Supabase Postgres and is read-only from the service. Ephemeral session state (cart, recency) lives in Render Key Value (Redis) keyed by an HTTP-only fe_sid cookie with a rolling 7-day TTL.",
+          "Everything is session-scoped by a single cookie minted lazily on the first request. In production the cookie is flipped to SameSite=None; Secure so it survives the Vercel → Render cross-origin round trip; CORS is configured with allow_credentials=True and an explicit origin list.",
+        ],
+      },
+      {
+        id: "search",
+        label: "Search Pipeline",
+        content: [
+          "Each catalog table has a generated tsvector column and a GIN index for full-text search, plus pg_trgm GIN indexes on the most-searched string columns for fuzzy matching. The RPCs combine both strategies — plainto_tsquery for stemming and phrase handling, trigram similarity for typos and partial words — and order by ts_rank first with trigram similarity as a tiebreaker.",
+          "The same RPCs back both /api/search and the AI chat's search tools. That means the LLM sees the exact same ranked results a human would, which keeps the assistant's suggestions grounded in the real catalog and makes it trivial to cite rows back to the UI.",
+        ],
+      },
+      {
+        id: "cart",
+        label: "Session Cart (Redis)",
+        content: [
+          "The cart is a Redis hash at cart:{sid} with one field per item, keyed by {type}:{id}. Value is JSON meta (qty for equipment, hours for labor). Writes do HSET + EXPIRE on the cart, then ZADD + EXPIRE on recent:{sid}:{type} to power the prefetch/recency feed. Deletes are a single HDEL. Re-posting the same field overwrites it — that's how the cart modal's inline qty/hours editor works without a dedicated update route.",
+          "Reads HGETALL the whole cart, then fetch full rows from Postgres with WHERE id IN (...). Redis only stores ids + meta; names, prices, and addresses come fresh from Postgres on every read, so catalog price changes flow through to existing carts automatically. Abandoned carts delete themselves via the rolling 7-day TTL — no cron job, no schema.",
+        ],
+      },
+      {
+        id: "ai-chat",
+        label: "AI Chat (SSE + Tool Use)",
+        content: [
+          "The /api/ai/chat endpoint is a streaming proxy over Anthropic's Messages API using Claude Haiku 4.5. The frontend opens one SSE connection and the server runs Claude's tool-use loop (capped at 4 iterations) server-side, forwarding text deltas, tool notifications, cited rows, and a terminal done event as JSON-encoded SSE frames.",
+          "Claude gets three tools — search_equipment, search_labor, search_customer — each backed by the same Supabase RPCs that power /api/search. Tool results are collected as refs, deduped by id, and emitted once at the end of the turn so the frontend can render them as clickable cards under the assistant bubble. Tapping a card adds the row to the cart via the normal /api/cart/items path.",
+          "Two sharp edges worth calling out: the system prompt is built per-request and injects the current cart summary plus any pinned customer so Claude has context without a tool call; and the Anthropic SDK's block.model_dump() leaks fields like parsed_output that the API rejects on the next turn, so assistant blocks are sanitized to a whitelist ({type,text} / {type,id,name,input}) before being appended back to the message history.",
+        ],
+      },
+      {
+        id: "deployment",
+        label: "Deployment",
+        content: [
+          "Three managed services, no VM: Vercel for the SPA, Render for the FastAPI web service + Key Value (Redis) instance in the same region, and Supabase for Postgres. VITE_API_URL points the frontend at the Render backend; the frontend uses credentials: 'include' on every fetch.",
+          "The cross-site cookie is the most failure-prone piece. ENV=production on the backend flips fe_sid to HttpOnly; Secure; SameSite=None, and CORS is configured with allow_credentials=True plus an explicit CORS_ORIGIN (no wildcards). Trailing slashes or http/https mismatches in CORS_ORIGIN silently break the handshake — a gotcha worth remembering.",
+        ],
+      },
+      {
+        id: "lessons",
+        label: "What I'd Do Next",
+        content:
+          "supabase-py is sync and currently called from async handlers (FastAPI offloads to a threadpool) — a higher-load deployment should move to asyncpg or httpx against the REST endpoint. Auth today is just a random session UUID; a real multi-tenant deployment would need a user/org table and signed session tokens keyed by user_id. And the tool-use loop could be extended with write tools (e.g. 'add this to cart for me') now that the SSE protocol is already in place.",
+      },
+    ],
+  },
 };
 
 export function ProjectDetails() {
