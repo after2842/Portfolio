@@ -1,8 +1,14 @@
 const jobs = [
   {
+    company: "G-P (Globalization Partners)",
+    role: "AI Engineer Intern",
+    period: "2026 — present",
+    desc: "Harness engineering for due diligence.",
+  },
+  {
     company: "UC Irvine",
     role: "Student Assistant",
-    period: "2026 — present",
+    period: "2026 — May 2026",
     desc: "Migrating the old Software Research website to new framework.",
   },
   {
